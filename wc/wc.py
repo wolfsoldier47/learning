@@ -37,16 +37,21 @@ def total_words_only(file):
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Word count in a file and display the size of the file")
-    parser.add_argument('file', nargs='?',type=str, help="Path to the file.")
+    parser.add_argument('file', nargs='?',type=str, help="Path to the file or cat <filename> | python wc.py")
+    # parser.add_argument('-h','--help',help="print helps",action='help')
     parser.add_argument("-w",'--words',help="to count the number of words",action="store_true")
     parser.add_argument('-k','--kilobytes',help="convert to kilobytes",action="store_true")
     parser.add_argument('-l','--lines',help="total lines",action="store_true")
     parser.add_argument('-c','--size',help="total lines",action="store_true")
     return parser.parse_args()
 
+
+
 def parsing():
     stdin = False
     args = parse_arguments()
+
+
     if args.file:
         if args.kilobytes:
             size_file = file_size_kilobytes(args.file)
@@ -54,7 +59,7 @@ def parsing():
         elif args.file:
             size_file = file_size(args.file)
             type_unit = "Bytes"
-    else:
+    elif sys.stdin:
         file_content = sys.stdin.read()
         stdin = True
 
