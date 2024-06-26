@@ -38,9 +38,8 @@ class JsonLexer:
                 match = pattern.match(self.text, self.position)
                 if match:
                     if pattern_name == 'RBRACKET':
-                        self.right_bracket -= 1
-                        if self.brace_balance < 0:
-                            raise Exception(f"Unmatched closing brace at position {self.position + 1}")
+                        self.right_bracket += 1
+
                     elif pattern_name == 'LBRACKET':
                         self.brace_balance += 1
                         self.left_bracket += 1
@@ -71,6 +70,7 @@ def parse_arguments():
 
 
 def main_token_checker(tokens,rightbrace,rightbracket):
+    print(rightbrace,rightbracket)
     state = "START"
     for token in tokens:
         token_type, token_value = token
