@@ -24,6 +24,7 @@ class JsonLexer:
         self.text = text
         self.position = 0
         self.brace_balance = 0
+        self.bracket_balance = 0
         self.right_brace = 0
         self.right_bracket = 0
         self.left_brace = 0
@@ -37,13 +38,14 @@ class JsonLexer:
                 pattern_name, pattern = token_spec
                 match = pattern.match(self.text, self.position)
                 if match:
-                    if pattern_name == 'RBRACKET':
+                    if pattern_name == 'LBRACKET':
+                        self.bracket_balance +=1
                         self.right_bracket += 1
-
-                    elif pattern_name == 'LBRACKET':
-                        self.brace_balance += 1
+                    elif pattern_name == 'RBRACKET':
+                        self.bracket_balance -=1
                         self.left_bracket += 1
-
+                        if self.bracket_balance < 0:
+                            raise Exception(f"Unmatched closing bracket at position {self.position + 1}")
                     if pattern_name == 'LBRACE':
                         self.brace_balance += 1
                         self.left_brace += 1
@@ -83,7 +85,7 @@ def main_token_checker(tokens,rightbrace,rightbracket):
             if token_type == 'STRING':
                 state = 'COLON'
             else:
-                raise Exception(f"Expected a string or closing brace after opening brace, got: {token_value}")
+                raise Exception(f"Expected a string or closing brace after opening , got: {token_value}")
         elif state == "COLON":
             if token_type == "COLON":
                 state = 'VALUE'
@@ -101,8 +103,9 @@ def main_token_checker(tokens,rightbrace,rightbracket):
                 raise Exception(f"Expected a value after colon, got: {token_value}")
 
         elif state == 'LIST_LOOP':
-            if token_type == 'STRING' or token_type == 'COMMA' or token_type == 'BOOL' or token_type == 'NUMBER' or token_type == 'NULL': 
-                state = "LIST_LOOP"
+            if token_type == 'STRING' or token_type == 'COMMA' or token_type == 'BOOL' or token_type == 'NUMBER' or token_type == 'NULL':
+                    state = "LIST_LOOP"
+
             elif token_type == 'RBRACKET':
                 state = "COMMA_OR_END"
             else:

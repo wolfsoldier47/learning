@@ -1,7 +1,8 @@
 {
-  "key": "value",
-  "key-n": 101,
+  "key": "Value",
   "key-o": {
-    "inner key": "inner value"
+    "inner key": ["a","b"],
+    "test": {"c":{"D":"e"}}
   },
+  "test": [,]
 }
