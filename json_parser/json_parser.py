@@ -4,6 +4,8 @@ import re
 TOKENS_SPECIFICATION =[
     ('LBRACE', r'\{'),           # {
     ('RBRACE', r'\}'),           # }
+    ('LBRACKET',r'\['),          # [
+    ('RBRACKET',r'\]'),          # ]
     ('COLON', r':'),             # :
     ('COMMA', r','),             # ,
     ('STRING', r'"([^"\\]*(?:\\.[^"\\]*)*)"'),  # "key" or "value" (handles escape sequences)
@@ -23,6 +25,9 @@ class JsonLexer:
         self.position = 0
         self.brace_balance = 0
         self.right_brace = 0
+        self.right_bracket = 0
+        self.left_brace = 0
+        self.left_bracket = 0
 
     def tokenize(self):
         tokens = []
@@ -32,8 +37,17 @@ class JsonLexer:
                 pattern_name, pattern = token_spec
                 match = pattern.match(self.text, self.position)
                 if match:
+                    if pattern_name == 'RBRACKET':
+                        self.right_bracket -= 1
+                        if self.brace_balance < 0:
+                            raise Exception(f"Unmatched closing brace at position {self.position + 1}")
+                    elif pattern_name == 'LBRACKET':
+                        self.brace_balance += 1
+                        self.left_bracket += 1
+
                     if pattern_name == 'LBRACE':
                         self.brace_balance += 1
+                        self.left_brace += 1
                     elif pattern_name == 'RBRACE':
                         self.brace_balance -= 1
                         self.right_brace += 1
@@ -47,7 +61,7 @@ class JsonLexer:
             if not match:
                 raise Exception(f"Illegal character at position {self.position +1 }")
         print(tokens)
-        return tokens,self.right_brace
+        return tokens,self.right_brace, self.right_bracket
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Json parser")
@@ -56,7 +70,7 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def main_token_checker(tokens,rightbrace):
+def main_token_checker(tokens,rightbrace,rightbracket):
     state = "START"
     for token in tokens:
         token_type, token_value = token
@@ -68,12 +82,6 @@ def main_token_checker(tokens,rightbrace):
         elif state == "KEY":
             if token_type == 'STRING':
                 state = 'COLON'
-            elif token_type == 'RBRACE':
-                if rightbrace >= 1:
-                    rightbrace -= 1
-                    state = 'COMMA_OR_END'
-                else:
-                    state = 'END'
             else:
                 raise Exception(f"Expected a string or closing brace after opening brace, got: {token_value}")
         elif state == "COLON":
@@ -86,8 +94,20 @@ def main_token_checker(tokens,rightbrace):
                 state = 'COMMA_OR_END'
             elif token_type == "LBRACE":
                 state = "KEY"
+            elif token_type == "LBRACKET":
+                state = "LIST_LOOP"
+
             else:
                 raise Exception(f"Expected a value after colon, got: {token_value}")
+
+        elif state == 'LIST_LOOP':
+            if token_type == 'STRING' or token_type == 'COMMA' or token_type == 'BOOL' or token_type == 'NUMBER' or token_type == 'NULL': 
+                state = "LIST_LOOP"
+            elif token_type == 'RBRACKET':
+                state = "COMMA_OR_END"
+            else:
+                raise Exception(f"Expected a value after Bracket Opening, got: {token_value}")
+
         elif state == 'COMMA_OR_END':
             if token_type == 'COMMA':
                 state = 'KEY'
@@ -95,6 +115,12 @@ def main_token_checker(tokens,rightbrace):
                 if rightbrace > 1:
                     state = 'COMMA_OR_END'
                     rightbrace -= 1
+                else:
+                    state = 'END'
+            elif token_type == 'RBRACKET':
+                if rightbracket > 1:
+                    state = 'COMMA_OR_END'
+                    rightbracket -= 1
                 else:
                     state = 'END'
             else:
@@ -107,11 +133,11 @@ def main_token_checker(tokens,rightbrace):
         else:
             raise Exception("JSON object ended prematurely")
 
-def validate_token(tokens,rightbrace):
+def validate_token(tokens,rightbrace,rightbracket):
     if tokens[0] == ('LBRACE', '{') and tokens[1] == ('RBRACE', '}'):
         print("All good")
     else:
-        main_token_checker(tokens,rightbrace)
+        main_token_checker(tokens,rightbrace,rightbracket)
 
 def main():
     args = parse_arguments()
@@ -134,8 +160,8 @@ def main():
     else:
         lexer = JsonLexer(content)
         try:
-            tokens,rightbrace = lexer.tokenize()
-            validate_token(tokens,rightbrace)
+            tokens,rightbrace,rightbracket = lexer.tokenize()
+            validate_token(tokens,rightbrace,rightbracket)
         except ValueError as e:
             print("Invalid JSON")
             sys.exit(1)
