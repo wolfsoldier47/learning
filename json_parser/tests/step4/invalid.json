@@ -4,5 +4,5 @@
     "inner key": ["a","b"],
     "test": {"c":{"D":"e"}}
   },
-  "test": [,]
+  "test": []
 }
