@@ -1,0 +1,63 @@
+Buffalo, N.Y.
+Burlington, Vt.
+Caribou, Maine
+Casper, Wyo.
+Charleston, S.C.
+Charleston, W.Va.
+Charlotte, N.C.
+Cheyenne, Wyo.
+Chicago, Ill.
+Cleveland, Ohio
+Columbia, S.C.
+Columbus, Ohio
+Concord, N.H.
+Dallas-Ft. Worth, Texas
+Denver, Colo.
+Des Moines, Iowa
+Detroit, Mich.
+Dodge City, Kan.
+Duluth, Minn.
+El Paso, Texas
+Fairbanks, Alaska
+Fargo, N.D.
+Grand Junction, Colo.
+Grand Rapids, Mich.
+Hartford, Conn.
+Helena, Mont.
+Honolulu, Hawaii
+Houston, Texas
+Indianapolis, Ind.
+Jackson, Miss.
+Jacksonville, Fla.
+Juneau, Alaska
+Kansas City, Mo.
+Knoxville, Tenn.
+Las Vegas, Nev.
+Lexington, Ky.
+Little Rock, Ark.
+Long Beach, Calif.
+Los Angeles, Calif.
+Louisville, Ky.
+Madison, Wisc.
+Memphis, Tenn.
+Miami, Fla.
+Milwaukee, Wisc.
+Minneapolisâ€“St. Paul, Minn.
+Mobile, Ala.
+Montgomery, Ala.
+Mt. Washington, N.H.
+Nashville, Tenn.
+Newark, N.J.
+New Orleans, La.
+New York, N.Y.
+Norfolk, Va.
+Oklahoma City, Okla.
+Olympia, Wash.
+Omaha, Neb.
+Philadelphia, Pa.
+Phoenix, Ariz.
+Pittsburgh, Pa.
+Portland, Maine
+Portland, Ore.
+Providence, R.I.
+Raleigh, N.C.
